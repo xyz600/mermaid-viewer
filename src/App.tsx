@@ -40,53 +40,55 @@ function App() {
   const lineNumbers = code.split('\n').map((_, index) => index + 1);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* Header */}
-      <header className="bg-blue-600 text-white p-4 shadow-md">
-        <div className="max-w-7xl mx-auto">
+      <header className="bg-blue-600 text-white shadow-lg">
+        <div className="container mx-auto px-4 py-3">
           <h1 className="text-2xl font-bold">Mermaid Viewer</h1>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-grow flex flex-col md:flex-row p-4 gap-4 max-w-7xl mx-auto w-full">
-        {/* Editor Section */}
-        <div className="w-full md:w-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-          <div className="p-2 bg-gray-200 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="font-medium">Editor</h2>
-          </div>
-          <div className="flex">
-            {/* Line Numbers */}
-            <div className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 p-2 text-right select-none">
-              {lineNumbers.map(num => (
-                <div key={num} className="pr-2">{num}</div>
-              ))}
+      <main className="flex-grow container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Editor Section */}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-200 dark:bg-slate-700 px-4 py-2 border-b border-slate-300 dark:border-slate-600">
+              <h2 className="font-medium text-lg">Editor</h2>
             </div>
-            {/* Text Editor */}
-            <textarea
-              className="w-full p-2 font-mono bg-white dark:bg-gray-800 border-none resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              rows={Math.max(10, lineNumbers.length)}
-              spellCheck={false}
-            />
+            <div className="flex">
+              {/* Line Numbers */}
+              <div className="bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 py-3 px-2 text-right select-none font-mono border-r border-slate-200 dark:border-slate-600 w-12">
+                {lineNumbers.map(num => (
+                  <div key={num} className="leading-6">{num}</div>
+                ))}
+              </div>
+              {/* Text Editor */}
+              <textarea
+                className="w-full p-3 font-mono bg-white dark:bg-slate-800 border-none resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none leading-6"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                rows={Math.max(10, lineNumbers.length)}
+                spellCheck={false}
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Preview Section */}
-        <div className="w-full md:w-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-          <div className="p-2 bg-gray-200 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
-            <h2 className="font-medium">Preview</h2>
-          </div>
-          <div className="p-4 overflow-auto">
-            <div ref={mermaidRef} className="hidden"></div>
-            <div dangerouslySetInnerHTML={{ __html: svgOutput }} />
+          {/* Preview Section */}
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+            <div className="bg-slate-200 dark:bg-slate-700 px-4 py-2 border-b border-slate-300 dark:border-slate-600">
+              <h2 className="font-medium text-lg">Preview</h2>
+            </div>
+            <div className="p-4 overflow-auto min-h-[300px] flex items-center justify-center">
+              <div ref={mermaidRef} className="hidden"></div>
+              <div dangerouslySetInnerHTML={{ __html: svgOutput }} />
+            </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-200 dark:bg-gray-800 p-4 text-center text-gray-600 dark:text-gray-400 text-sm">
+      <footer className="bg-slate-200 dark:bg-slate-800 py-4 text-center text-slate-600 dark:text-slate-400 text-sm border-t border-slate-300 dark:border-slate-700">
         <p>Mermaid Viewer - A tool for creating and visualizing diagrams</p>
       </footer>
     </div>
