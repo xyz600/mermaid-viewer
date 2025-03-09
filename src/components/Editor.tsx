@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 interface EditorProps {
   code: string;
@@ -9,6 +9,19 @@ interface EditorProps {
 export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine }) => {
   // Generate line numbers for the editor
   const lineNumbers = code.split('\n').map((_, index) => index + 1);
+
+  // Create a ref for the scrollable container
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Handle scrolling to highlighted line if provided
+  useEffect(() => {
+    if (highlightedLine && scrollContainerRef.current) {
+      const lineHeight = 1.5; // 1.5rem line height
+      const scrollTop = (highlightedLine - 1) * lineHeight * 16; // Convert rem to px (assuming 1rem = 16px)
+      scrollContainerRef.current.scrollTop = scrollTop;
+    }
+  }, [highlightedLine]);
 
   return (
     <div style={{ 
@@ -24,8 +37,17 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
       }}>
         <h2 style={{ margin: 0, fontSize: '1rem' }}>Editor</h2>
       </div>
-      <div style={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
-        <div style={{ display: 'flex', width: '100%', overflow: 'auto' }}>
+      {/* Main scrollable container that will scroll both line numbers and textarea together */}
+      <div 
+        ref={scrollContainerRef}
+        style={{ 
+          display: 'flex', 
+          flexGrow: 1, 
+          overflow: 'auto',
+          position: 'relative'
+        }}
+      >
+        <div style={{ display: 'flex', width: '100%', minHeight: '100%' }}>
           {/* Line numbers */}
           <div style={{ 
             backgroundColor: '#f3f4f6', 
@@ -58,6 +80,7 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
           {/* Text editor */}
           <div style={{ flexGrow: 1, position: 'relative' }}>
             <textarea
+              ref={textareaRef}
               style={{ 
                 width: '100%',
                 height: '100%',
@@ -69,7 +92,9 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
                 resize: 'none',
                 outline: 'none',
                 position: 'relative',
-                zIndex: 1
+                zIndex: 1,
+                overflow: 'hidden', // Prevent textarea from scrolling independently
+                backgroundColor: 'transparent' // Make background transparent to see highlight
               }}
               value={code}
               onChange={(e) => onChange(e.target.value)}
