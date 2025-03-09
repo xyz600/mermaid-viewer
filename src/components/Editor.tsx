@@ -47,7 +47,7 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
           position: 'relative'
         }}
       >
-        <div style={{ display: 'flex', width: '100%', minHeight: '100%' }}>
+        <div style={{ display: 'flex', width: '100%', height: '100%' }}>
           {/* Line numbers */}
           <div style={{ 
             backgroundColor: '#f3f4f6', 
@@ -78,12 +78,31 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
             ))}
           </div>
           {/* Text editor */}
-          <div style={{ flexGrow: 1, position: 'relative' }}>
+          <div style={{ flexGrow: 1, position: 'relative', display: 'flex' }}>
+            <pre
+              style={{
+                margin: 0,
+                padding: '0.5rem',
+                fontFamily: 'monospace',
+                fontSize: '14px',
+                lineHeight: '1.5rem',
+                whiteSpace: 'pre-wrap',
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                pointerEvents: 'none',
+                color: 'transparent',
+                overflow: 'hidden'
+              }}
+            >
+              {code}
+            </pre>
             <textarea
               ref={textareaRef}
               style={{ 
                 width: '100%',
-                height: '100%',
+                height: 'auto',
+                minHeight: '100%',
                 padding: '0.5rem',
                 fontFamily: 'monospace',
                 fontSize: '14px',
@@ -93,8 +112,8 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
                 outline: 'none',
                 position: 'relative',
                 zIndex: 1,
-                overflow: 'hidden', // Prevent textarea from scrolling independently
-                backgroundColor: 'transparent' // Make background transparent to see highlight
+                backgroundColor: 'transparent', // Make background transparent to see highlight
+                caretColor: 'black' // Ensure cursor is visible
               }}
               value={code}
               onChange={(e) => onChange(e.target.value)}
