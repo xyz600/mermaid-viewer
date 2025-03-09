@@ -1,54 +1,72 @@
-# React + TypeScript + Vite
+# Mermaid Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based editor and viewer for [Mermaid](https://mermaid.js.org/) diagrams. Create, edit, and preview Mermaid diagrams in real-time.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Real-time preview of Mermaid diagrams
+- Editor with syntax highlighting
+- Zoom and pan functionality for diagrams
+- Fullscreen mode
+- Responsive design
 
-## Expanding the ESLint configuration
+## Live Demo
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Visit the live demo at: [https://xyz600.github.io/mermaid-viewer/](https://xyz600.github.io/mermaid-viewer/)
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Development
+
+This project is built with:
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Mermaid.js
+
+### Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/xyz600/mermaid-viewer.git
+   cd mermaid-viewer
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Building for Production
+
+```bash
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The build output will be in the `dist` directory.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Deployment
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+This project is configured to deploy to GitHub Pages automatically when changes are pushed to the main branch. The deployment is handled by GitHub Actions.
+
+To manually deploy:
+
+1. Push your changes to the main branch:
+   ```bash
+   git push origin main
+   ```
+
+2. GitHub Actions will automatically build and deploy the site to GitHub Pages.
+
+3. You can also trigger a deployment manually from the GitHub Actions tab in the repository.
+
+## License
+
+[MIT](LICENSE)
