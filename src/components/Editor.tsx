@@ -10,8 +10,19 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
   // Generate line numbers for the editor
   const lineNumbers = code.split('\n').map((_, index) => index + 1);
 
-  // Create a ref for the scrollable container
+  // Create refs for the scrollable container and textarea
   const editorContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Adjust textarea height to match content
+  useEffect(() => {
+    if (textareaRef.current) {
+      // Reset height to auto to get the correct scrollHeight
+      textareaRef.current.style.height = 'auto';
+      // Set height to scrollHeight to fit all content
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [code]); // Re-run when code changes
 
   // Handle scrolling to highlighted line if provided
   useEffect(() => {
@@ -57,6 +68,7 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
           fontSize: '14px',
           borderRight: '1px solid #e5e7eb',
           minWidth: '2.5rem',
+          overflow: "visible",
           flexShrink: 0
         }}>
           {lineNumbers.map(num => (
@@ -79,12 +91,14 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
         {/* Text editor area - non-scrollable itself */}
         <div style={{ 
           flexGrow: 1, 
-          position: 'relative'
+          position: 'relative',
+          overflow: 'visible', 
         }}>
           <textarea
+            ref={textareaRef}
             style={{ 
               width: '100%',
-              height: '100%',
+              minHeight: '100%',
               padding: '0.5rem',
               fontFamily: 'monospace',
               fontSize: '14px',
@@ -96,7 +110,12 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
               backgroundColor: 'white'
             }}
             value={code}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              onChange(e.target.value);
+              // Immediately adjust height after content change
+              e.target.style.height = 'auto';
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
             spellCheck={false}
           />
           {highlightedLine && (
