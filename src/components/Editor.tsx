@@ -33,6 +33,7 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
           textAlign: 'right',
           userSelect: 'none',
           fontFamily: 'monospace',
+          fontSize: '14px',
           borderRight: '1px solid #e5e7eb',
           minWidth: '2.5rem'
         }}>
@@ -43,7 +44,9 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
                 backgroundColor: highlightedLine === num ? '#fef3c7' : 'transparent',
                 fontWeight: highlightedLine === num ? 'bold' : 'normal',
                 color: highlightedLine === num ? '#92400e' : '#6b7280',
-                padding: '0 0.25rem'
+                padding: '0 0.25rem',
+                lineHeight: '1.5rem',
+                height: '1.5rem'
               }}
             >
               {num}
@@ -58,6 +61,8 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
               height: '100%',
               padding: '0.5rem',
               fontFamily: 'monospace',
+              fontSize: '14px',
+              lineHeight: '1.5rem',
               border: 'none',
               resize: 'none',
               outline: 'none',
