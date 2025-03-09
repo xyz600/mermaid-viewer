@@ -7,6 +7,7 @@ interface PreviewProps {
   isDragging: boolean;
   isFullScreen: boolean;
   toggleFullScreen: () => void;
+  onElementDoubleClick?: (elementId: string) => void;
   handlers: {
     handleWheel: (e: React.WheelEvent) => void;
     handleMouseDown: (e: React.MouseEvent) => void;
@@ -23,6 +24,7 @@ export const Preview: React.FC<PreviewProps> = ({
   isDragging,
   isFullScreen,
   toggleFullScreen,
+  onElementDoubleClick,
   handlers,
 }) => {
   const mermaidRef = useRef<HTMLDivElement>(null);
@@ -101,10 +103,25 @@ export const Preview: React.FC<PreviewProps> = ({
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: 'center center',
             transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-            userSelect: 'none',
-            pointerEvents: 'none' // Prevent SVG from capturing mouse events
+            userSelect: 'none'
           }} 
-          dangerouslySetInnerHTML={{ __html: svgOutput }} 
+          dangerouslySetInnerHTML={{ __html: svgOutput }}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent click from triggering pan
+            
+            // Find the closest SVG element with an id
+            let target = e.target as Element;
+            while (target && !target.id && target.parentElement) {
+              target = target.parentElement;
+            }
+            
+            console.log('Clicked element:', target);
+            console.log('Element ID:', target?.id);
+            
+            if (target && target.id && onElementDoubleClick) {
+              onElementDoubleClick(target.id);
+            }
+          }}
         />
       </div>
     </div>

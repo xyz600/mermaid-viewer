@@ -13,6 +13,8 @@ interface LayoutProps {
   isDragging: boolean;
   isFullScreen: boolean;
   toggleFullScreen: () => void;
+  highlightedLine?: number;
+  onElementDoubleClick?: (elementId: string) => void;
   zoomAndPanHandlers: {
     handleWheel: (e: React.WheelEvent) => void;
     handleMouseDown: (e: React.MouseEvent) => void;
@@ -32,6 +34,8 @@ export const Layout: React.FC<LayoutProps> = ({
   isDragging,
   isFullScreen,
   toggleFullScreen,
+  highlightedLine,
+  onElementDoubleClick,
   zoomAndPanHandlers,
 }) => {
   return (
@@ -51,7 +55,11 @@ export const Layout: React.FC<LayoutProps> = ({
           flex: isFullScreen ? 0 : 1, 
           display: isFullScreen ? 'none' : 'flex', 
         }}>
-          <Editor code={code} onChange={onCodeChange} />
+          <Editor 
+            code={code} 
+            onChange={onCodeChange} 
+            highlightedLine={highlightedLine} 
+          />
         </div>
 
         {/* Right side - Preview */}
@@ -62,6 +70,7 @@ export const Layout: React.FC<LayoutProps> = ({
           isDragging={isDragging}
           isFullScreen={isFullScreen}
           toggleFullScreen={toggleFullScreen}
+          onElementDoubleClick={onElementDoubleClick}
           handlers={zoomAndPanHandlers}
         />
       </main>
