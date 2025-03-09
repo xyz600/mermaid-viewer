@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, MouseEvent } from 'react'
 import mermaid from 'mermaid'
 
 // Initialize mermaid
@@ -16,7 +16,12 @@ function App() {
     D --> B
     B ---->|No| E[End]`);
   const [svgOutput, setSvgOutput] = useState<string>('');
+  const [zoom, setZoom] = useState<number>(1);
+  const [pan, setPan] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragStart, setDragStart] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
   const mermaidRef = useRef<HTMLDivElement>(null);
+  const previewContainerRef = useRef<HTMLDivElement>(null);
 
   // Render mermaid diagram when code changes
   useEffect(() => {
@@ -25,7 +30,27 @@ function App() {
         try {
           mermaidRef.current.innerHTML = '';
           const { svg } = await mermaid.render('mermaid-diagram', code);
-          setSvgOutput(svg);
+          
+          // Modify SVG to prevent text selection and interaction
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svg, 'image/svg+xml');
+          const svgElement = svgDoc.documentElement;
+          
+          // Add style to prevent interaction with SVG elements
+          const style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+          style.textContent = `
+            * {
+              pointer-events: none;
+              user-select: none;
+            }
+          `;
+          svgElement.appendChild(style);
+          
+          // Convert back to string
+          const serializer = new XMLSerializer();
+          const modifiedSvg = serializer.serializeToString(svgDoc);
+          
+          setSvgOutput(modifiedSvg);
         } catch (error) {
           console.error('Failed to render mermaid diagram:', error);
           setSvgOutput('<div style="color: red; padding: 1rem;">Error rendering diagram</div>');
@@ -124,16 +149,57 @@ function App() {
           }}>
             <h2 style={{ margin: 0, fontSize: '1rem' }}>Preview</h2>
           </div>
-          <div style={{ 
-            padding: '1rem', 
-            flexGrow: 1, 
-            overflow: 'auto',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
+          <div 
+            ref={previewContainerRef}
+            style={{ 
+              padding: '1rem', 
+              flexGrow: 1, 
+              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              position: 'relative',
+              cursor: isDragging ? 'grabbing' : 'grab'
+            }}
+            onWheel={(e) => {
+              e.preventDefault();
+              const delta = e.deltaY * -0.01;
+              const newZoom = Math.max(0.1, Math.min(5, zoom + delta));
+              setZoom(newZoom);
+            }}
+            onMouseDown={(e: MouseEvent) => {
+              setIsDragging(true);
+              setDragStart({ x: e.clientX, y: e.clientY });
+            }}
+            onMouseMove={(e: MouseEvent) => {
+              if (isDragging) {
+                const dx = e.clientX - dragStart.x;
+                const dy = e.clientY - dragStart.y;
+                setPan({ x: pan.x + dx, y: pan.y + dy });
+                setDragStart({ x: e.clientX, y: e.clientY });
+              }
+            }}
+            onMouseUp={() => {
+              setIsDragging(false);
+            }}
+            onMouseLeave={() => {
+              setIsDragging(false);
+            }}
+          >
             <div ref={mermaidRef} style={{ display: 'none' }}></div>
-            <div dangerouslySetInnerHTML={{ __html: svgOutput }} />
+            <div 
+              style={{ 
+                transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+                transformOrigin: 'center center',
+                transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+                userSelect: 'none'
+              }} 
+              dangerouslySetInnerHTML={{ __html: svgOutput }} 
+              onMouseDown={(e) => {
+                // Prevent default behavior to avoid text selection
+                e.preventDefault();
+              }}
+            />
           </div>
         </div>
       </main>
