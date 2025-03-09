@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
 interface PreviewProps {
   svgOutput: string;
@@ -7,6 +7,7 @@ interface PreviewProps {
   isDragging: boolean;
   isFullScreen: boolean;
   toggleFullScreen: () => void;
+  onElementDoubleClick?: (elementId: string) => void;
   handlers: {
     handleWheel: (e: React.WheelEvent) => void;
     handleMouseDown: (e: React.MouseEvent) => void;
@@ -23,10 +24,50 @@ export const Preview: React.FC<PreviewProps> = ({
   isDragging,
   isFullScreen,
   toggleFullScreen,
+  onElementDoubleClick,
   handlers,
 }) => {
   const mermaidRef = useRef<HTMLDivElement>(null);
   const previewContainerRef = useRef<HTMLDivElement>(null);
+  const svgContainerRef = useRef<HTMLDivElement>(null);
+  const [nodePositions, setNodePositions] = useState<Array<{id: string, x: number, y: number, width: number, height: number}>>([]);
+  
+  // Extract node positions from SVG after rendering
+  useEffect(() => {
+    if (svgContainerRef.current && svgOutput) {
+      setTimeout(() => {
+        const svgElement = svgContainerRef.current?.querySelector('svg');
+        if (svgElement) {
+          console.log('Extracting node positions from SVG');
+          
+          const positions: Array<{id: string, x: number, y: number, width: number, height: number}> = [];
+          
+          // Find all nodes
+          const nodeElements = svgElement.querySelectorAll('.node, .cluster');
+          nodeElements.forEach(node => {
+            const rect = node.getBoundingClientRect();
+            const svgRect = svgElement.getBoundingClientRect();
+            
+            // Get position relative to SVG
+            const x = rect.left - svgRect.left;
+            const y = rect.top - svgRect.top;
+            
+            positions.push({
+              id: node.id || `node-${positions.length}`,
+              x,
+              y,
+              width: rect.width,
+              height: rect.height
+            });
+            
+            console.log(`Node ${node.id} position: x=${x}, y=${y}, width=${rect.width}, height=${rect.height}`);
+          });
+          
+          setNodePositions(positions);
+        }
+      }, 500); // Longer delay to ensure SVG is fully rendered and positioned
+    }
+  }, [svgOutput]);
 
   return (
     <div style={{ 
@@ -96,16 +137,57 @@ export const Preview: React.FC<PreviewProps> = ({
         onMouseLeave={handlers.handleMouseLeave}
       >
         <div ref={mermaidRef} style={{ display: 'none' }}></div>
-        <div 
-          style={{ 
-            transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
-            transformOrigin: 'center center',
-            transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-            userSelect: 'none',
-            pointerEvents: 'none' // Prevent SVG from capturing mouse events
-          }} 
-          dangerouslySetInnerHTML={{ __html: svgOutput }} 
-        />
+        <div style={{ position: 'relative' }}>
+          {/* SVG Container */}
+          <div 
+            ref={svgContainerRef}
+            style={{ 
+              transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
+              transformOrigin: 'center center',
+              transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+              userSelect: 'none',
+              position: 'relative'
+            }} 
+            dangerouslySetInnerHTML={{ __html: svgOutput }}
+          />
+          
+          {/* Clickable overlays for nodes */}
+          <div 
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              width: '100%', 
+              height: '100%', 
+              pointerEvents: 'none' 
+            }}
+          >
+            {nodePositions.map((node) => (
+              <div 
+                key={node.id}
+                style={{
+                  position: 'absolute',
+                  left: `${node.x * zoom + pan.x}px`,
+                  top: `${node.y * zoom + pan.y}px`,
+                  width: `${node.width * zoom}px`,
+                  height: `${node.height * zoom}px`,
+                  backgroundColor: 'rgba(0, 0, 0, 0.0)',
+                  border: '1px solid rgba(0, 0, 0, 0.0)',
+                  cursor: 'pointer',
+                  pointerEvents: 'all',
+                  zIndex: 10
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Overlay clicked for node:', node.id);
+                  if (onElementDoubleClick) {
+                    onElementDoubleClick(node.id);
+                  }
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

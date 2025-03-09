@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { useMermaidRenderer } from './hooks/useMermaidRenderer';
 import { useZoomAndPan } from './hooks/useZoomAndPan';
 import { useFullScreen } from './hooks/useFullScreen';
+import { useMermaidElementMapping } from './hooks/useMermaidElementMapping';
 
 function App() {
   // State for the mermaid code
@@ -13,10 +14,31 @@ function App() {
     D --> B
     B ---->|No| E[End]`);
 
+  // State for highlighted line
+  const [highlightedLine, setHighlightedLine] = useState<number | undefined>(undefined);
+
   // Custom hooks
   const svgOutput = useMermaidRenderer(code);
   const { isFullScreen, toggleFullScreen } = useFullScreen();
   const { zoom, pan, isDragging, handlers } = useZoomAndPan();
+  const { getLineForElement } = useMermaidElementMapping(code);
+
+  // Handle click on SVG element (changed from double-click to single click)
+  const handleElementDoubleClick = (elementId: string) => {
+    console.log('Element clicked with ID:', elementId);
+    
+    const lineNumber = getLineForElement(elementId);
+    console.log('Mapped to line number:', lineNumber);
+    
+    if (lineNumber) {
+      setHighlightedLine(lineNumber);
+      
+      // Clear the highlight after a delay
+      setTimeout(() => {
+        setHighlightedLine(undefined);
+      }, 3000);
+    }
+  };
 
   return (
     <Layout
@@ -29,6 +51,8 @@ function App() {
       isDragging={isDragging}
       isFullScreen={isFullScreen}
       toggleFullScreen={toggleFullScreen}
+      highlightedLine={highlightedLine}
+      onElementDoubleClick={handleElementDoubleClick} // We keep the same prop name for compatibility
       zoomAndPanHandlers={handlers}
     />
   );
