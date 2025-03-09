@@ -17,8 +17,8 @@ export const useZoomAndPan = (initialZoom = 1) => {
 
   const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
-    const delta = e.deltaY * -0.01;
-    const newZoom = Math.max(0.1, Math.min(30, state.zoom + delta));
+    const factor = Math.pow(1.1, e.deltaY > 0 ? -1 : 1); // 1.1 for zoom out, 1/1.1 for zoom in
+    const newZoom = Math.max(0.1, Math.min(30, state.zoom * factor));
     setState(prev => ({ ...prev, zoom: newZoom }));
   };
 
