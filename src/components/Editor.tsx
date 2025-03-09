@@ -24,8 +24,8 @@ export const Editor: React.FC<EditorProps> = ({ code, onChange, highlightedLine 
       }}>
         <h2 style={{ margin: 0, fontSize: '1rem' }}>Editor</h2>
       </div>
-      <div style={{ display: 'flex', flexGrow: 1, overflow: 'auto' }}>
-        <div style={{ display: 'flex', width: '100%' }}>
+      <div style={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', width: '100%', overflow: 'auto' }}>
           {/* Line numbers */}
           <div style={{ 
             backgroundColor: '#f3f4f6', 
