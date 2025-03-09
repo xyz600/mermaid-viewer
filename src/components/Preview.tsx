@@ -109,17 +109,42 @@ export const Preview: React.FC<PreviewProps> = ({
           onClick={(e) => {
             e.stopPropagation(); // Prevent click from triggering pan
             
+            console.log('Click event triggered');
+            
             // Find the closest SVG element with an id
             let target = e.target as Element;
-            while (target && !target.id && target.parentElement) {
-              target = target.parentElement;
+            console.log('Original target:', target);
+            
+            // Log all parent elements to debug
+            let currentElement = target;
+            let depth = 0;
+            while (currentElement && depth < 10) {
+              console.log(`Parent level ${depth}:`, currentElement.tagName, currentElement.id, currentElement.className);
+              if (currentElement.parentElement) {
+                currentElement = currentElement.parentElement;
+                depth++;
+              } else {
+                break;
+              }
             }
             
-            console.log('Clicked element:', target);
-            console.log('Element ID:', target?.id);
+            // Reset and find element with ID
+            currentElement = target;
+            while (currentElement && !currentElement.id && currentElement.parentElement) {
+              currentElement = currentElement.parentElement;
+            }
             
-            if (target && target.id && onElementDoubleClick) {
-              onElementDoubleClick(target.id);
+            console.log('Found element with ID:', currentElement);
+            console.log('Element ID:', currentElement?.id);
+            
+            if (currentElement && currentElement.id && onElementDoubleClick) {
+              console.log('Calling onElementDoubleClick with ID:', currentElement.id);
+              onElementDoubleClick(currentElement.id);
+            } else {
+              console.log('Not calling onElementDoubleClick because:',
+                !currentElement ? 'No element found' :
+                !currentElement.id ? 'Element has no ID' :
+                !onElementDoubleClick ? 'No callback provided' : 'Unknown reason');
             }
           }}
         />

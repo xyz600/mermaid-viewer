@@ -58,6 +58,23 @@ export const useMermaidRenderer = (code: string) => {
           node.classList.add('node');
           node.classList.add('clickable-element');
           
+          // Try to extract node ID from text content if no ID exists
+          if (!node.id) {
+            // Find text element inside the node
+            const textElement = node.querySelector('text');
+            if (textElement && textElement.textContent) {
+              // Extract potential node ID from text content
+              const match = textElement.textContent.match(/^([A-Za-z0-9_-]+)$/);
+              if (match) {
+                node.id = `node-${match[1]}`;
+                console.log('Added ID to node:', node.id);
+              }
+            }
+          }
+          
+          // Add data attribute for debugging
+          node.setAttribute('data-clickable', 'true');
+          
           // Add title for better accessibility
           const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
           title.textContent = 'Click to highlight source code';
@@ -68,6 +85,21 @@ export const useMermaidRenderer = (code: string) => {
         const edgeElements = svgElement.querySelectorAll('.edgePath');
         edgeElements.forEach(edge => {
           edge.classList.add('clickable-element');
+          
+          // Add data attribute for debugging
+          edge.setAttribute('data-clickable', 'true');
+          
+          // Try to extract edge IDs from the path
+          if (!edge.id) {
+            const pathElement = edge.querySelector('path');
+            if (pathElement && pathElement.id) {
+              const match = pathElement.id.match(/([A-Za-z0-9_-]+)-([A-Za-z0-9_-]+)/);
+              if (match) {
+                edge.id = `edge-${match[1]}-${match[2]}`;
+                console.log('Added ID to edge:', edge.id);
+              }
+            }
+          }
           
           // Add title for better accessibility
           const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');

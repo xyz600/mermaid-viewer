@@ -9,6 +9,9 @@ export const useMermaidElementMapping = (code: string) => {
     const lines = code.split('\n');
     const mapping: Record<string, number> = {};
     
+    console.log('Parsing Mermaid code for mapping:');
+    console.log(code);
+    
     // Process each line to find node definitions and relationships
     lines.forEach((line, index) => {
       // Remove leading/trailing whitespace
@@ -24,6 +27,7 @@ export const useMermaidElementMapping = (code: string) => {
       if (nodeMatch) {
         const nodeId = nodeMatch[1];
         mapping[nodeId] = index + 1; // Line numbers are 1-based
+        console.log(`Mapped node ${nodeId} to line ${index + 1}`);
         return;
       }
       
@@ -32,12 +36,14 @@ export const useMermaidElementMapping = (code: string) => {
       if (relationMatch) {
         const sourceId = relationMatch[1];
         mapping[sourceId] = index + 1;
+        console.log(`Mapped source ${sourceId} to line ${index + 1}`);
         
         // Try to extract the target node as well
         const targetMatch = trimmedLine.match(/(-+>|==+>|--+|==+|\.\.-+>|\.\.-+)\s*([A-Za-z0-9_-]+)/);
         if (targetMatch) {
           const targetId = targetMatch[2];
           mapping[targetId] = index + 1;
+          console.log(`Mapped target ${targetId} to line ${index + 1}`);
         }
         
         return;
@@ -48,6 +54,7 @@ export const useMermaidElementMapping = (code: string) => {
     });
     
     setElementToLineMap(mapping);
+    console.log('Final mapping:', mapping);
   }, [code]);
 
   // Function to find the line number for a given element ID
@@ -75,12 +82,38 @@ export const useMermaidElementMapping = (code: string) => {
       }
     }
     
-    // Pattern 3: Try to extract from more complex IDs
-    nodeIdMatch = elementId.match(/(?:node-|edge-)([A-Za-z0-9_-]+)/);
+    // Pattern 3: Try to extract from node- prefix (our custom added IDs)
+    nodeIdMatch = elementId.match(/node-([A-Za-z0-9_-]+)/);
     if (nodeIdMatch) {
       const nodeId = nodeIdMatch[1];
-      console.log('Extracted node ID (pattern 3):', nodeId);
+      console.log('Extracted node ID from node- prefix:', nodeId);
       if (elementToLineMap[nodeId]) {
+        return elementToLineMap[nodeId];
+      }
+    }
+    
+    // Pattern 4: Try to extract from edge- prefix (our custom added IDs)
+    const edgeMatch = elementId.match(/edge-([A-Za-z0-9_-]+)-([A-Za-z0-9_-]+)/);
+    if (edgeMatch) {
+      const sourceId = edgeMatch[1];
+      const targetId = edgeMatch[2];
+      console.log('Extracted source and target from edge:', sourceId, targetId);
+      
+      // Try source first, then target
+      if (elementToLineMap[sourceId]) {
+        return elementToLineMap[sourceId];
+      }
+      if (elementToLineMap[targetId]) {
+        return elementToLineMap[targetId];
+      }
+    }
+    
+    // Pattern 5: Try to extract from any element with an ID that contains a letter
+    // This is a fallback for any other ID format
+    for (const nodeId in elementToLineMap) {
+      const regex = new RegExp(`\\b${nodeId}\\b`);
+      if (regex.test(elementId)) {
+        console.log('Found node ID with word boundary match:', nodeId);
         return elementToLineMap[nodeId];
       }
     }
