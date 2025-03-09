@@ -40,10 +40,19 @@ export const useMermaidRenderer = (code: string) => {
           }
           .clickable-element {
             cursor: pointer;
+            pointer-events: all;
           }
           .clickable-element:hover {
             filter: brightness(0.9);
             stroke-width: 1.2;
+          }
+          /* Make sure all elements inside nodes are clickable */
+          .node rect, .node circle, .node ellipse, .node polygon, .node path, .node text {
+            pointer-events: all;
+          }
+          /* Make sure all elements inside edges are clickable */
+          .edgePath path, .edgeLabel text {
+            pointer-events: all;
           }
         `;
         svgElement.appendChild(style);
