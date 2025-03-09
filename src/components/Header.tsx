@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
         }}>
           <h3 style={{ margin: '0 0 12px 0', color: '#3b82f6' }}>Mermaid Viewer</h3>
           <p style={{ margin: '8px 0', lineHeight: '1.5' }}>
-            This application allows you to create and preview Mermaid diagrams in real-time.
+            mermaidの内容をリアルタイムプレビューするアプリケーションです。
           </p>
           <p style={{ margin: '8px 0', lineHeight: '1.5' }}>
             <a 
@@ -71,23 +71,23 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
               rel="noopener noreferrer"
               style={{ color: '#3b82f6', textDecoration: 'none' }}
             >
-              Learn more about Mermaid syntax
+              mermaidのドキュメントを見る
             </a>
           </p>
           
-          <h4 style={{ margin: '16px 0 8px 0', fontSize: '14px' }}>Controls:</h4>
+          <h4 style={{ margin: '16px 0 8px 0', fontSize: '14px' }}>操作方法:</h4>
           <ul style={{ margin: '0', paddingLeft: '20px', fontSize: '14px' }}>
             <li style={{ margin: '4px 0' }}>
-              <strong>Fullscreen:</strong> Click the expand button in the top-right of the preview or press <kbd style={{ backgroundColor: '#f1f5f9', padding: '2px 4px', borderRadius: '4px' }}>Ctrl+F</kbd>
+              <strong>拡大表示:</strong> プレビュー右上の拡大ボタンをクリックするか、<kbd style={{ backgroundColor: '#f1f5f9', padding: '2px 4px', borderRadius: '4px' }}>Ctrl+F</kbd>を押す
             </li>
             <li style={{ margin: '4px 0' }}>
-              <strong>Exit Fullscreen:</strong> Click the close button or press <kbd style={{ backgroundColor: '#f1f5f9', padding: '2px 4px', borderRadius: '4px' }}>Escape</kbd>
+              <strong>拡大表示を終了:</strong> 閉じるボタンをクリックするか、<kbd style={{ backgroundColor: '#f1f5f9', padding: '2px 4px', borderRadius: '4px' }}>Escape</kbd>キーを押す
             </li>
             <li style={{ margin: '4px 0' }}>
-              <strong>Pan:</strong> Click and drag the diagram
+              <strong>移動 (パン):</strong> 図をクリックしてドラッグする
             </li>
             <li style={{ margin: '4px 0' }}>
-              <strong>Zoom:</strong> Use the mouse wheel to zoom in and out
+              <strong>ズーム:</strong> マウスホイールを使用して拡大・縮小する
             </li>
           </ul>
           
@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ title }) => {
               fontSize: '14px'
             }}
           >
-            Close
+            閉じる
           </button>
         </div>
       )}
