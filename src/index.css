@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Remove default margin from body element */
+/* Remove default margin and prevent scrolling on body element */
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }

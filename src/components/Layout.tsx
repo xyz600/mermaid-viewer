@@ -39,7 +39,7 @@ export const Layout: React.FC<LayoutProps> = ({
   zoomAndPanHandlers,
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <Header title={title} />
       
       <main style={{ 
@@ -48,7 +48,8 @@ export const Layout: React.FC<LayoutProps> = ({
         flexGrow: 1,
         padding: isFullScreen ? '0' : '1rem',
         gap: isFullScreen ? '0' : '1rem',
-        transition: 'all 0.3s ease'
+        transition: 'all 0.3s ease',
+        overflow: 'hidden'
       }}>
         {/* Left side - Editor */}
         <div style={{ 
